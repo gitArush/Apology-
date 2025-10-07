@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💖 I'm Sorry, My Love 💖</title>
+<style>
+body{margin:0;font-family:'Poppins',sans-serif;background:linear-gradient(135deg,#ffd6e0,#ffe9f3);color:#4a2c2a;}
+header{background:#ff8fab;color:white;text-align:center;padding:1rem;font-size:1.8rem;font-weight:bold;box-shadow:0 4px 8px rgba(0,0,0,0.2);}
+nav{display:flex;justify-content:center;flex-wrap:wrap;gap:1rem;background:#ffb3c6;padding:0.8rem;box-shadow:0 4px 8px rgba(0,0,0,0.1);}
+nav button{background:#fff;border:none;border-radius:25px;padding:0.6rem 1.2rem;cursor:pointer;font-weight:600;transition:all 0.3s ease;}
+nav button:hover{background:#ff8fab;color:#fff;}
+section{display:none;text-align:center;padding:2rem;animation:fadeIn 0.6s ease;}
+section.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+/* Maze */
+#mazeContainer{display:inline-block;margin-top:1rem;background:#fff;border-radius:15px;box-shadow:0 4px 8px rgba(0,0,0,0.2);padding:10px;}
+canvas{border-radius:10px;background:#fff5f8;display:block;margin:auto;}
+.controls{margin-top:10px;display:flex;justify-content:center;gap:6px;flex-wrap:wrap;}
+.control-btn{padding:8px 12px;border-radius:12px;border:none;background:#ff8fab;color:white;font-weight:700;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<header>💖 I'm Sorry, My Baby Girl 💖</header>
+
+<nav>
+  <button onclick="showSection('home')">Home</button>
+  <button onclick="showSection('maze')">Love Maze</button>
+  <button onclick="showSection('letter')">Apology Letter</button>
+  <button onclick="showSection('pickup')">Pickup Lines</button>
+</nav>
+
+<section id="home" class="active">
+  <h2>Welcome, My Kuchuuu Puchuuu ❤️</h2>
+  <p>Everything here is just for you. Please forgive me for everything i did😭😭😭. I love you soo much. I dont want to lose you.😭😭</p>
+</section>
+
+<section id="maze">
+  <h2>Love Maze 💘</h2>
+  <div id="mazeContainer">
+    <canvas id="mazeCanvas" width="250" height="250"></canvas>
+  </div>
+  <div class="controls">
+    <button class="control-btn" onclick="move('up')">▲</button>
+    <button class="control-btn" onclick="move('left')">◀</button>
+    <button class="control-btn" onclick="move('down')">▼</button>
+    <button class="control-btn" onclick="move('right')">▶</button>
+    <button class="control-btn" onclick="resetMaze()">Reset</button>
+  </div>
+</section>
+
+<section id="letter">
+  <h2>My Apology 💌</h2>
+  <p>I’m sorry for everything, my love. I know I messed up, but my heart never stops beating for you. Every word here comes from my soul — I just want your smile back. 💖</p>
+</section>
+
+<section id="pickup">
+  <h2>Pickup Lines 💫</h2>
+  <p>💬 “Are you a magician? Because whenever I look at you, everyone else disappears.”</p>
+  <p>💬 “Even if I had a map, I’d still get lost in your eyes.”</p>
+  <p>💬 “You must be tired… because you’ve been running through my mind all day.”</p>
+</section>
+
+<script>
+// Navigation
+function showSection(id){
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ---------------- Maze ----------------
+const canvas=document.getElementById('mazeCanvas');
+const ctx=canvas.getContext('2d');
+const cellSize=25;
+const rows=10,cols=10;
+const maze=[
+[0,1,0,0,0,1,0,0,0,0],
+[0,1,0,1,0,1,0,1,1,0],
+[0,0,0,1,0,0,0,0,1,0],
+[1,1,0,1,1,1,1,0,1,0],
+[0,0,0,0,0,0,1,0,0,0],
+[0,1,1,1,1,0,1,1,1,0],
+[0,0,0,0,1,0,0,0,1,0],
+[0,1,1,0,1,0,1,0,1,0],
+[0,0,0,0,0,0,1,0,0,0],
+[1,1,1,1,1,0,0,0,1,0]
+];
+let heart={x:0,y:0};
+const goal={x:9,y:9};
+
+function drawHeart(x,y,color){
+  ctx.fillStyle=color;
+  ctx.beginPath();
+  const topCurveHeight=cellSize/2.5;
+  ctx.moveTo(x+cellSize/2,y+cellSize/4);
+  ctx.bezierCurveTo(x+cellSize/2,y, x, y, x, y+topCurveHeight);
+  ctx.bezierCurveTo(x, y+cellSize/2, x+cellSize/2, y+cellSize/1.5, x+cellSize/2, y+cellSize);
+  ctx.bezierCurveTo(x+cellSize/2, y+cellSize/1.5, x+cellSize, y+cellSize/2, x+cellSize, y+topCurveHeight);
+  ctx.bezierCurveTo(x+cellSize, y, x+cellSize/2, y, x+cellSize/2, y+cellSize/4);
+  ctx.fill();
+}
+
+function drawMaze(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      if(maze[r][c]===1){
+        ctx.fillStyle='#d8a1c4';
+        ctx.fillRect(c*cellSize,r*cellSize,cellSize,cellSize);
+      }
+    }
+  }
+  drawHeart(heart.x*cellSize,heart.y*cellSize,'red');
+  drawHeart(goal.x*cellSize,goal.y*cellSize,'#ff69b4');
+}
+
+function move(dir){
+  let nx=heart.x,ny=heart.y;
+  if(dir==='up') ny--;
+  if(dir==='down') ny++;
+  if(dir==='left') nx--;
+  if(dir==='right') nx++;
+  if(nx>=0&&nx<cols&&ny>=0&&ny<rows&&maze[ny][nx]===0){
+    heart={x:nx,y:ny};
+    drawMaze();
+    if(heart.x===goal.x&&heart.y===goal.y){
+      setTimeout(()=>alert('You found the way to my heart! ❤️'),200);
+    }
+  }
+}
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('maze').classList.contains('active')){
+    if(e.key==='ArrowUp') move('up');
+    if(e.key==='ArrowDown') move('down');
+    if(e.key==='ArrowLeft') move('left');
+    if(e.key==='ArrowRight') move('right');
+  }
+});
+function resetMaze(){heart={x:0,y:0};drawMaze();}
+drawMaze();
+</script>
+
+</body>
+</html>
